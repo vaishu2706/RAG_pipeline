@@ -6,7 +6,7 @@ Metrics: faithfulness, answer_relevancy, context_recall (retrieval quality)
 from dotenv import load_dotenv
 from datasets import Dataset
 from ragas import evaluate
-from ragas.metrics import faithfulness, answer_relevancy, context_recall
+from ragas.metrics import faithfulness, answer_relevancy, context_recall, answer_correctness
 from rag import build_rag_chain
 
 load_dotenv()
@@ -38,5 +38,5 @@ def run_evaluation(eval_samples: list[dict]) -> dict:
         "ground_truth": ground_truths,
     })
 
-    scores = evaluate(dataset, metrics=[faithfulness, answer_relevancy, context_recall])
+    scores = evaluate(dataset, metrics=[faithfulness, answer_relevancy, context_recall, answer_correctness])
     return scores.to_pandas().to_dict(orient="records")

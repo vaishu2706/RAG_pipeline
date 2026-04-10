@@ -23,6 +23,7 @@ PROMPT = PromptTemplate(
     template="""You are a helpful assistant. Use ONLY the context below to answer.
 If the answer is not in the context, say exactly: "I don't have enough information in the provided documents."
 Do NOT use your training knowledge. Do NOT make up facts.
+Be concise and direct. If the question has multiple parts, address each part separately.
 
 Context:
 {context}
@@ -37,8 +38,8 @@ def build_rag_chain():
     vs = get_vector_store()
     collection_size = vs._collection.count()
 
-    k = max(1, min(10, collection_size))
-    top_n = max(1, min(4, k))
+    k = max(1, min(20, collection_size))
+    top_n = max(1, min(6, k))
 
     # Semantic retriever
     semantic_retriever = vs.as_retriever(
