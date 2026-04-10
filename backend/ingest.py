@@ -22,7 +22,7 @@ from langchain_chroma import Chroma
 load_dotenv()
 
 CHROMA_DIR = "./chroma_db"
-CHUNK_SIZE = 1000
+CHUNK_SIZE = 800
 CHUNK_OVERLAP = 200
 
 
@@ -44,7 +44,7 @@ def load_document(source: str):
 
 
 def split_documents(docs):
-    """Step 3: Split into 1000-char chunks with 200-char overlap."""
+    """Step 3: Split into 800-char chunks with 200-char overlap (25% overlap for better boundary coverage)."""
     if not docs or all(not d.page_content.strip() for d in docs):
         raise ValueError("Document appears to be empty or contains no extractable text (possible OCR/scan issue).")
     splitter = RecursiveCharacterTextSplitter(

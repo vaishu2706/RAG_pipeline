@@ -20,10 +20,13 @@ load_dotenv()
 
 PROMPT = PromptTemplate(
     input_variables=["context", "question"],
-    template="""You are a helpful assistant. Use ONLY the context below to answer.
+    template="""You are a precise assistant. Answer using ONLY the context below.
 If the answer is not in the context, say exactly: "I don't have enough information in the provided documents."
-Do NOT use your training knowledge. Do NOT make up facts.
-Be concise and direct. If the question has multiple parts, address each part separately.
+Rules:
+- Do NOT use training knowledge or invent facts.
+- For multi-part questions, number each part in your answer.
+- Quote or closely paraphrase the source text when possible.
+- Keep answers concise; omit information not asked for.
 
 Context:
 {context}
@@ -39,8 +42,8 @@ def build_rag_chain():
     collection_size = vs._collection.count()
 
     k = max(1, min(20, collection_size))
-    print(f"Collection has {collection_size} chunks. Using k={k} for retrieval and top_n={max(1, min(6, k))} for reranking.")
-    top_n = max(1, min(6, k))
+    top_n = max(1, min(8, k))
+    print(f"Collection has {collection_size} chunks. Using k={k} for retrieval and top_n={top_n} for reranking.")
 
     # Semantic retriever
     semantic_retriever = vs.as_retriever(
@@ -56,10 +59,10 @@ def build_rag_chain():
             for text, meta in zip(all_docs["documents"], all_docs["metadatas"])
         ]
         bm25_retriever = BM25Retriever.from_documents(docs_for_bm25, k=k)
-        # Ensemble: 50% semantic + 50% BM25
+        # Ensemble: 60% semantic + 40% BM25 (semantic favored for answer accuracy)
         base_retriever = EnsembleRetriever(
             retrievers=[semantic_retriever, bm25_retriever],
-            weights=[0.5, 0.5],
+            weights=[0.6, 0.4],
         )
     else:
         base_retriever = semantic_retriever
