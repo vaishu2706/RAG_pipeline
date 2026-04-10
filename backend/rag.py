@@ -39,6 +39,7 @@ def build_rag_chain():
     collection_size = vs._collection.count()
 
     k = max(1, min(20, collection_size))
+    print(f"Collection has {collection_size} chunks. Using k={k} for retrieval and top_n={max(1, min(6, k))} for reranking.")
     top_n = max(1, min(6, k))
 
     # Semantic retriever
